@@ -25,7 +25,8 @@ def embed_ts(df, target_col, n_k):
 
     Returns
     -------
-    embedding data를 가지고 있는 data frame.   
+    embedding data를 가지고 있는 data frame.
+    문제가 있을경우 None을 return
 
     """    
         
@@ -36,8 +37,8 @@ def embed_ts(df, target_col, n_k):
     for i in range(len(a_slice)):
         if i+n_k > len(a_slice):
             break        
-        a_row = a_slice[i:i+n_k]
-        ret_df.loc[len(ret_df)] = a_row        
+        a_row = a_slice[i:i+n_k]                
+        ret_df.loc[len(ret_df)] = a_row
         
     return ret_df
 

@@ -172,7 +172,7 @@ def AddStats(df, col_name, annualize_std = False, window=30, year_d=365):
     df[col_name + '_SUM'] = ndf[col_name].rolling(window).sum()
 
 
-def LoadK200Data(start_str, end_str, rolling_win=20, save_file=False):
+def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     """
     지정된 시작일부터 종료일 까지의 KOSPI200과 관련 데이터 로드
     지수, VIX, Log수익률, 실현 변동성, WTI선물가격, 원달러환율, 원달러환율 변동성
@@ -291,11 +291,11 @@ def LoadK200Data(start_str, end_str, rolling_win=20, save_file=False):
     return (df, ewm_df)
 
 
-if __name__ == "__main__":
-    start_str = '20030101'
-    end_str = '20220627'    
+# if __name__ == "__main__":
+#     start_str = '20030101'
+#     end_str = '20220627'    
     
-    df, ewm_df = LoadK200Data(start_str, end_str, rolling_win=20, save_file=True)
+#     df, ewm_df = LoadK200Data(start_str, end_str, rolling_win=20, save_file=True)
    
     
     # df['FVSPREAD'] = df['K200_FRV'] - df['VKOSPI']    
