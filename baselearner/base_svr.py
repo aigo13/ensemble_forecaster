@@ -82,11 +82,12 @@ if __name__ == "__main__":
     tmpdf['F_K200_RET_STD'] = fwdstd
     tmpdf = tmpdf.set_index(df.index[:-20])
     
+    # Y는 (n_samples, 1)만 가능
     x_train = np.array(df[all_cols][:-30])
-    y_train = np.array(tmpdf[target_cols][:-10])
+    y_train = np.array(tmpdf['F_K200_RET_SUM'][:-10])
     
     x_test = np.array(df[all_cols][-30:])
-    y_test = tmpdf[target_cols][-10:]
+    y_test = tmpdf['F_K200_RET_SUM'][-10:]
     
     learner = BaseSVR()
     r2score = learner.fit(x_train, y_train)

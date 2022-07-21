@@ -82,10 +82,10 @@ if __name__ == "__main__":
     tmpdf = tmpdf.set_index(df.index[:-20])
     
     x_train = np.array(df[all_cols][:-30])
-    y_train = np.array(tmpdf[target_cols][:-10])
+    y_train = np.array(tmpdf['F_K200_RET_SUM'][:-10])
     
     x_test = np.array(df[all_cols][-30:])
-    y_test = tmpdf[target_cols][-10:]
+    y_test = tmpdf['F_K200_RET_SUM'][-10:]
     
     learner = BaseAdaBoost()
     r2score = learner.fit(x_train, y_train)

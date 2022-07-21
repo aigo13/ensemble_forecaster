@@ -1,8 +1,9 @@
 from .unionpipe import UnionPipe
-from .simple_avg import SimpleAvgModel
+from .simple_avg import SimpleAvgEnsemble
 
 
 __all__ = [
     "UnionPipe",
-    "SimpleAvgModel"
+    "SimpleAvgEnsemble",
+    "MyEnsembleModel"
     ]

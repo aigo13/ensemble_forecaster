@@ -207,7 +207,7 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     ewm_df = df.ewm(alpha=0.3, adjust=False).mean()
     rv_ret = LogRet(ewm_df['KOSPI2'])    
     ret_df = pd.DataFrame()
-    ret_df['K200_RET'] = rv_ret * 100.0
+    ret_df['KOSPI2_RET'] = rv_ret * 100.0
     ret_df = ret_df.set_index(ewm_df.index[1:]) 
     
     fx_ret = LogRet(ewm_df['USDKRW'])    
@@ -232,7 +232,7 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     # return 통계치
     rv_ret = LogRet(df['KOSPI2'])    
     ret_df = pd.DataFrame()
-    ret_df['K200_RET'] = rv_ret * 100.0
+    ret_df['KOSPI2_RET'] = rv_ret * 100.0
     ret_df = ret_df.set_index(df.index[1:])
     
     # FX Log return
@@ -258,19 +258,19 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     df.dropna(inplace=True)    
         
     # ewma statistics
-    AddStats(ewm_df, 'K200_RET', annualize_std=True, window=rolling_win) 
+    AddStats(ewm_df, 'KOSPI2_RET', annualize_std=True, window=rolling_win) 
     AddStats(ewm_df, 'FX_RET', annualize_std=True, window=rolling_win)    
     AddStats(ewm_df, 'CRUDE_RET', annualize_std=True, window=rolling_win)
     AddStats(ewm_df, 'SPX_RET', annualize_std=True, window=rolling_win)
-    ewm_df['VSPREAD'] =  ewm_df['K200_RET_STD'] - ewm_df['VKOSPI']    
+    ewm_df['VSPREAD'] =  ewm_df['KOSPI2_RET_STD'] - ewm_df['VKOSPI']    
     ewm_df['VIX_SPREAD'] =  ewm_df['SPX_RET_STD'] - ewm_df['VSPX']
     
     # add statistics
-    AddStats(df, 'K200_RET', annualize_std=True, window=rolling_win)
+    AddStats(df, 'KOSPI2_RET', annualize_std=True, window=rolling_win)
     AddStats(df, 'FX_RET', annualize_std=True, window=rolling_win)
     AddStats(df, 'CRUDE_RET', annualize_std=True, window=rolling_win)
     AddStats(df, 'SPX_RET', annualize_std=True, window=rolling_win)
-    df['VSPREAD'] =  df['K200_RET_STD'] - df['VKOSPI']
+    df['VSPREAD'] =  df['KOSPI2_RET_STD'] - df['VKOSPI']
     df['VIX_SPREAD'] =  df['SPX_RET_STD'] - df['VSPX']
     
     # Final Cleanse
