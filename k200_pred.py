@@ -10,6 +10,7 @@ import numpy as np
 
 # scaler
 from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import StandardScaler
 
 # ensemble models
 from ensemble import MyEnsembleModel
@@ -17,6 +18,8 @@ from ensemble import SimpleAvgEnsemble
 
 # base models
 from sklearn.linear_model import Ridge
+from sklearn.linear_model import ElasticNet
+#import xgboost
 
 # data and utility
 from datagen import load_k200_data
@@ -55,8 +58,8 @@ def load_data_k200(start_dt, end_dt, rolling_win=20, from_file=False, path=None)
 def calc_mean_var(df, window, concat=True):
     target = 'KOSPI2_RET'
     mvdf = pd.DataFrame()
-    mvdf['T_' + target] = df[target].rolling(window).mean()
-    mvdf['T_' + target] = df[target].rolling(window).std()
+    mvdf['T_' + target + "_AVG"] = df[target].rolling(window).mean()
+    mvdf['T_' + target + "_STD"] = df[target].rolling(window).std()
     mvdf.dropna(inplace=True)
     
     # 예측치이므로 윈도우만큼 땡겨서 붙여줌
@@ -82,4 +85,24 @@ def prepare_k200(start_dt, end_dt, target_win=5, rolling_win=20):
 
 #### main
 if __name__ == "__main__":
+
+    target_win = 5
+    # data 불러오기
+    print('---> Load KOSPI200 Data')
+    data_df = prepare_k200('20030101', '20220627', target_win=target_win, rolling_win=20)
+    data_df = calc_mean_var(data_df, window=target_win)
+    target_col = ['T_KOSPI2_RET_AVG', 'T_KOSPI2_RET_STD']
+
+    # main ensemble model
+    print('---> Build Ensemble Model')
+    main_ensemble = MyEnsembleModel(data_df, target_col)   
+
+    # Ridge 계열 추가
+    p_name = 'RIDGE_01'
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['VOL'])  
+    print(f'--> adding {p_name} with features ---> {feat}')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)    
+    
     print('ss')
