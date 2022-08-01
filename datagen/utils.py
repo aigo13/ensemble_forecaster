@@ -12,7 +12,7 @@ import numpy as np
 def embed_ts(df, target_col, n_k):
     """
     지정된 time serise를 n_k 갯수만큼 임베딩함.
-    y_i를 k개 임베딩할 경우 [y_(i-k-1) .... y_i ]^T 가 됨
+    y_i를 k개 임베딩할 경우 [y_(i-k-1) .... y_i ] 가 됨
 
     Parameters
     ----------

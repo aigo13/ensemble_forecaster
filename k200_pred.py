@@ -11,6 +11,7 @@ import numpy as np
 # scaler
 from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import PolynomialFeatures
 
 # ensemble models
 from ensemble import MyEnsembleModel
@@ -19,6 +20,14 @@ from ensemble import SimpleAvgEnsemble
 # base models
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import ElasticNet
+from sklearn.gaussian_process.kernels import ExpSineSquared
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.kernel_ridge import KernelRidge # (n_samples, n_target)
+from sklearn.svm import SVR # (n_samples, )
+from sklearn.tree import DecisionTreeRegressor # (n_samples, n_target)
+from sklearn.linear_model import GammaRegressor # (n_samples) -> GLM
+from sklearn.gaussian_process import GaussianProcessRegressor # (target의 mean/std)
+from sklearn.ensemble import RandomForestRegressor
 #import xgboost
 
 # data and utility
@@ -31,7 +40,7 @@ _k200_feat_dict = {
     'KOSPI2': ['KOSPI2'],
     'RET' : ['KOSPI2_RET', 'KOSPI2_RET_AVG', 'KOSPI2_RET_MIN', 'KOSPI2_RET_MAX', 
              'KOSPI2_RET_AMP', 'KOSPI2_RET_STD', 'KOSPI2_RET_SKEW', 'KOSPI2_RET_SUM'],
-    'VOL' : ['VKOSPI', 'KOSPI2_RET_STD', 'VSPREAD'],
+    'VOL' : ['VKOSPI', 'VSPREAD'],
     'FX' : ['USDKRW', 'USDKRW_V', 'FX_RET', 'FX_RET_AVG', 'FX_RET_MIN',
             'FX_RET_MAX', 'FX_RET_AMP', 'FX_RET_STD', 'FX_RET_SKEW', 'FX_RET_SUM'],
     'COM' : ['CRUDE_F', 'CRUDE_RET', 'CRUDE_RET_AVG', 'CRUDE_RET_MIN',
@@ -42,6 +51,9 @@ _k200_feat_dict = {
              'VIX_SPREAD'],
     'CDS': ['ROKCDS']     
      }
+
+_embbed_target = ('KOSPI2', 'KOSPI2_RET', 'VKOSPI', 'USDKRW', 'USDKRW_V', 'FX_RET', 
+                'CRUDE_F', 'CRUDE_RET', 'SPX', 'VSPX', 'SPX_RET', 'ROKCDS')
 
 
 # kospi200 data 불러오기
@@ -72,16 +84,42 @@ def calc_mean_var(df, window, concat=True):
     else:
         return mvdf
 
+# time seriese embedding
+# embedding으로 추가된 column의 dict를 돌려준다.
+def embed_data(df : pd.DataFrame, target_col : tuple, eb_size : int):
+    # time series data를 embedding하기
+    col_list = {}
+    for a_col in target_col:
+        # embedding
+        edf = embed_ts(df, a_col, eb_size)
+        # 가져온 데이터를 기존 dataframe에 넣어줌        
+        edf = edf.set_index(df.index[(eb_size-1):])        
+        col_list[a_col] = np.array(edf.columns)
+        df = pd.concat([df, edf], axis=1)    
+    
+    return (df, col_list)
+
 # data 읽어서 가져오기
-def prepare_k200(start_dt, end_dt, target_win=5, rolling_win=20):    
+def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):    
     # file version
     df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win, \
                         from_file=True, \
                         path="./data/20030101_20220627_k200ewm.csv")
     # db version
     #df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win)
+
+    if embed == True:
+        eb_ret = embed_data(df, _embbed_target, rolling_win)
+        df = eb_ret[0]
+        eb_dict = eb_ret[1]
+
+    # 최종 cleanse    
     df.dropna(inplace=True)
-    return df
+
+    if embed == False:
+        return (df, None)
+    else:
+        return (df, eb_dict)
 
 #### main
 if __name__ == "__main__":
@@ -89,7 +127,8 @@ if __name__ == "__main__":
     target_win = 5
     # data 불러오기
     print('---> Load KOSPI200 Data')
-    data_df = prepare_k200('20030101', '20220627', target_win=target_win, rolling_win=20)
+    prep_ret = prepare_k200('20030101', '20220627', rolling_win=20, embed=True)
+    data_df = prep_ret[0]
     data_df = calc_mean_var(data_df, window=target_win)
     target_col = ['T_KOSPI2_RET_AVG', 'T_KOSPI2_RET_STD']
 
@@ -97,7 +136,7 @@ if __name__ == "__main__":
     print('---> Build Ensemble Model')
     main_ensemble = MyEnsembleModel(data_df, target_col)   
 
-    # Ridge 계열 추가
+    # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯    
     p_name = 'RIDGE_01'
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
