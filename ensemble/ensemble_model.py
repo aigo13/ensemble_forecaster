@@ -54,9 +54,8 @@ class MyEnsembleModel:
                 raise TypeError("features는 string의 array-like 형태여야 합니다.")
             
             x_feat = np.array(features)
-        else:
-            
-            x_feat = np.setdiff1d(np.array(self.data.columns), np.array(features))
+        else:            
+            x_feat = np.setdiff1d(np.array(self.data.columns), np.array(self.target))
         
         # scaler와 base learner -> 현재 scaler->base learner의 순서만 지원
         n_scaler = len(scalers)
@@ -97,7 +96,8 @@ class MyEnsembleModel:
             a_learner = self.pipelines[a_key][1] # learner object
             learners.append((a_key, x_feat, a_learner))
         
-        self.union_pipe = UnionPipe(data=self.data, learners=learners)
+        #self.union_pipe = UnionPipe(data=self.data, learners=learners)
+        self.union_pipe = UnionPipe(learners=learners)
         
         # attribute check
         if (hasattr(ensemble, 'fit') and 
@@ -121,10 +121,10 @@ class MyEnsembleModel:
         """
         # ensemble pipeline의 fit을 호출
         self.union_pipe = self.union_pipe.fit(data=self.data, y=self.y_true)
-        # error 계산을 위한 x data predict
-        self.y_fitted = self.union_pipe.predict(data=self.data)    
+        # ensemble 계산을 위한 x data predict
+        self.y_fitted_all = self.union_pipe.predict(data=self.data)    
         # Ensemble model의 fit 호출
-        self.ensemble = self.ensemble.fit(X=self.y_fitted, y=self.y_true)
+        self.ensemble = self.ensemble.fit(X=self.y_fitted_all, y=self.y_true)
         
         return self
         

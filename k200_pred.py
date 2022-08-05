@@ -34,7 +34,6 @@ from sklearn.ensemble import RandomForestRegressor
 from datagen import load_k200_data
 from datagen import embed_ts
 
-
 # KOSPI200 feature 모음
 _k200_feat_dict = {
     'KOSPI2': ['KOSPI2'],
@@ -94,7 +93,7 @@ def embed_data(df : pd.DataFrame, target_col : tuple, eb_size : int):
         edf = embed_ts(df, a_col, eb_size)
         # 가져온 데이터를 기존 dataframe에 넣어줌        
         edf = edf.set_index(df.index[(eb_size-1):])        
-        col_list[a_col] = np.array(edf.columns)
+        col_list[a_col] = edf.columns.to_list()
         df = pd.concat([df, edf], axis=1)    
     
     return (df, col_list)
@@ -120,28 +119,126 @@ def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):
         return (df, None)
     else:
         return (df, eb_dict)
+    
+
+# Ridge Regressor 계열 base learner 추가
+def add_ridge_based_pipe(ensemble, data_df, ts_embed):
+    # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
+    prefix = "RIDGE"    
+    
+    # 1번 Vol
+    p_name = "_".join([prefix, "01"])
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['VOL'])
+    # embedding 값들이 있을 경우 해당 값도 포함
+    if ts_embed == True:
+        feat.extend(_k200_feat_dict['KOSPI2_em'])
+        feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
+        feat.extend(_k200_feat_dict['VKOSPI_em'])
+        
+    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)
+    
+    # 2번 FX
+    p_name = "_".join([prefix, "02"])
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['FX'])
+    # embedding 값들이 있을 경우 해당 값도 포함
+    if ts_embed == True:
+        feat.extend(_k200_feat_dict['KOSPI2_em'])
+        feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
+        feat.extend(_k200_feat_dict['USDKRW_em'])
+        feat.extend(_k200_feat_dict['FX_RET_em'])
+        feat.extend(_k200_feat_dict['USDKRW_V_em'])
+        
+    print(f'--> adding {p_name} with features ---> FX')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)    
+    
+    # 3번 WTI
+    p_name = "_".join([prefix, "03"])
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['COM'])
+    # embedding 값들이 있을 경우 해당 값도 포함
+    if ts_embed == True:
+        feat.extend(_k200_feat_dict['KOSPI2_em'])
+        feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
+        feat.extend(_k200_feat_dict['CRUDE_F_em'])
+        feat.extend(_k200_feat_dict['CRUDE_RET_em'])
+        
+    print(f'--> adding {p_name} with features ---> WTI')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)    
+    
+    # 4번 S&P500
+    p_name = "_".join([prefix, "04"])
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['FIDX'])
+    # embedding 값들이 있을 경우 해당 값도 포함
+    if ts_embed == True:
+        feat.extend(_k200_feat_dict['KOSPI2_em'])
+        feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
+        feat.extend(_k200_feat_dict['SPX_em'])
+        feat.extend(_k200_feat_dict['SPX_RET_em'])
+        feat.extend(_k200_feat_dict['VSPX_em'])
+        
+    print(f'--> adding {p_name} with features ---> SPX')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)
+    
+    # 5번 CDS
+    p_name = "_".join([prefix, "05"])
+    feat = _k200_feat_dict['KOSPI2'].copy()
+    feat.extend(_k200_feat_dict['RET'])
+    feat.extend(_k200_feat_dict['CDS'])
+    # embedding 값들이 있을 경우 해당 값도 포함
+    if ts_embed == True:
+        feat.extend(_k200_feat_dict['KOSPI2_em'])
+        feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
+        feat.extend(_k200_feat_dict['ROKCDS_em'])        
+        
+    print(f'--> adding {p_name} with features ---> CDS')  
+    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)    
+    
 
 #### main
 if __name__ == "__main__":
 
     target_win = 5
+    ts_embed = True
     # data 불러오기
     print('---> Load KOSPI200 Data')
-    prep_ret = prepare_k200('20030101', '20220627', rolling_win=20, embed=True)
+    prep_ret = prepare_k200('20030101', '20220627', rolling_win=20, embed=ts_embed)
     data_df = prep_ret[0]
-    data_df = calc_mean_var(data_df, window=target_win)
+    # embedding된 time series가 있는 경우 feat_dict에 포함시켜줌
+    if ts_embed == True:
+        for a_key in prep_ret[1]:
+            n_key = "_".join([a_key, "em"]) # embedded ts postfix
+            _k200_feat_dict[n_key] = prep_ret[1][a_key]
+    
+    
+    # target 생성하기
+    data_df = calc_mean_var(data_df, window=target_win)    
     target_col = ['T_KOSPI2_RET_AVG', 'T_KOSPI2_RET_STD']
 
     # main ensemble model
     print('---> Build Ensemble Model')
-    main_ensemble = MyEnsembleModel(data_df, target_col)   
+    main_ensemble = MyEnsembleModel(data_df[:-(target_win-1)], target_col)   
 
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯    
-    p_name = 'RIDGE_01'
-    feat = _k200_feat_dict['KOSPI2'].copy()
-    feat.extend(_k200_feat_dict['RET'])
-    feat.extend(_k200_feat_dict['VOL'])  
-    print(f'--> adding {p_name} with features ---> {feat}')  
-    main_ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge()], features=feat)    
+    add_ridge_based_pipe(main_ensemble, data_df, ts_embed)   
     
-    print('ss')
+    print('--> Build Ensemble(Simple Avg)')
+    main_ensemble.build_ensemble(SimpleAvgEnsemble())
+    
+    print('---> Call fitting')
+    fitted = main_ensemble.fit()
+    fitted_y = main_ensemble.y_fitted_all
+    
+    print('---> predict')
+    predicted = main_ensemble.predict(data_df[-(target_win-1):])
+    pred_all = main_ensemble.predict(data_df[:-(target_win-1)])
+
+    # [TODO] Score 함수 구현
+    # 성능 테스트 및 플로팅 고민해보기

@@ -6,7 +6,8 @@ Created on Wed Jun 15 09:34:31 2022
 """
 
 import pandas as pd
-import DBhandle as db
+from . import DBhandle as db
+#import DBhandle as db
 import numpy as np
 from datetime import datetime as dt
 #import matplotlib.pyplot as plt
