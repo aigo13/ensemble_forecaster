@@ -48,7 +48,7 @@ def LoadInner(sql, convert_dt, lagging=0):
     return pdf
 
 """
-    Load KOSPI200 and VKOSPI data from DB(IVG01B)
+    Load KOSPI200 and VKOSPI data from DB(IVG01B) 
 """
 def LoadIndexDB(start_str, end_str, convert_dt=False, dropna=False):
     sql = """select STD_DT, DECODE(TRIM(HF_BLMGRG), 'KOSPI2 INDEX', 'KOSPI2', 'VKOSPI INDEX', 'VKOSPI') as CODE, 
