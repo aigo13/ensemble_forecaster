@@ -66,10 +66,11 @@ def load_data_k200(start_dt, end_dt, rolling_win=20, from_file=False, path=None)
 
 # target window만큼의 향후 return sum, real vol 계산
 # KOSPI2_RET을 사용
-def calc_mean_var(df, window, concat=True):
+def calc_target_val(df, window, concat=True):
     target = 'KOSPI2_RET'
     mvdf = pd.DataFrame()
-    mvdf['T_' + target + "_AVG"] = df[target].rolling(window).mean()
+    #mvdf['T_' + target + "_AVG"] = df[target].rolling(window).mean()
+    mvdf['T_' + target + "_SUM"] = df[target].rolling(window).sum()
     mvdf['T_' + target + "_STD"] = df[target].rolling(window).std()
     mvdf.dropna(inplace=True)
     
@@ -218,9 +219,9 @@ if __name__ == "__main__":
             _k200_feat_dict[n_key] = prep_ret[1][a_key]
     
     
-    # target 생성하기
-    data_df = calc_mean_var(data_df, window=target_win)    
-    target_col = ['T_KOSPI2_RET_AVG', 'T_KOSPI2_RET_STD']
+    # target 생성하기(target_win 동안의 sum과 std)
+    data_df = calc_target_val(data_df, window=target_win)    
+    target_col = ['T_KOSPI2_RET_SUM', 'T_KOSPI2_RET_STD']
 
     # main ensemble model
     print('---> Build Ensemble Model')
@@ -242,3 +243,10 @@ if __name__ == "__main__":
 
     # [TODO] Score 함수 구현
     # 성능 테스트 및 플로팅 고민해보기
+    """
+    y_true = np.array(data_df[target_col][:-(target_win-1)])
+    u = ((y_true - pred_all)**2).sum()
+    v = ((y_true - y_true.mean())**2).sum()
+    r2 = 1. - u/v
+    print(r2)
+    """
