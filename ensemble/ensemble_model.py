@@ -104,8 +104,7 @@ class MyEnsembleModel:
             hasattr(ensemble, 'predict')) == False:
             raise TypeError("ensemble객체에 fit 함수와 predict 함수가 있어야 합니다.")
             
-        self.ensemble = ensemble
-        
+        self.ensemble = ensemble        
         return self
     
     def fit(self):
@@ -150,4 +149,42 @@ class MyEnsembleModel:
         # predict 결과 return
         return y_pred
     
+    def score(self, X, y):
+        """
+        전체 ensemble model의 score를 구함 
+
+        Args:
+            X (Array-like): feature and data
+            y (Array-like): truth
+
+        Returns:
+            float: r2 score
+        """
+        y_pred = self.predict(data=X)
+        # score 계산
+        if not isinstance(y, (np.ndarray)):
+            y_true = np.array(y)
+        else:
+            y_true = y
+        
+        u = ((y_true - y_pred)**2).sum()
+        v = ((y_true - y_true.mean())**2).sum()
+        r2 = 1. - u/v
+
+        return r2
+
+
+    def pipe_score(self, X, y):
+        """
+        등록된 개별 pipe들의 score를 보내줌
+
+        Args:
+            X (Array-like): feature and datra
+            y (Array-like): truth
+
+        Returns:
+            list of tupes: (name, score) tuple의 리스트
+        """
+        scores = self.union_pipe.score(X, y)
+        return scores    
     

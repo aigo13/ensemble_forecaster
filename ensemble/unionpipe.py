@@ -68,7 +68,7 @@ class UnionPipe:
             
         return self
     
-    def score(self, X):
+    def score(self, X, y):
         """
         fit score를 리턴함
 
@@ -80,7 +80,8 @@ class UnionPipe:
         """
         scores = []
         for idx, name, x_feat, learner in self._iter():
-            a_score = learner.score()
+            x_pipe = np.array(X[x_feat])
+            a_score = learner.score(x_pipe, y)
             scores.append((name, a_score))
         
         return scores

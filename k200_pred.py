@@ -243,10 +243,8 @@ if __name__ == "__main__":
 
     # [TODO] Score 함수 구현
     # 성능 테스트 및 플로팅 고민해보기
-    """
-    y_true = np.array(data_df[target_col][:-(target_win-1)])
-    u = ((y_true - pred_all)**2).sum()
-    v = ((y_true - y_true.mean())**2).sum()
-    r2 = 1. - u/v
-    print(r2)
-    """
+    r2 = main_ensemble.score(data_df[:-(target_win-1)], data_df[target_col][:-(target_win-1)])
+    pipe_scores = main_ensemble.pipe_score(data_df[:-(target_win-1)], data_df[target_col][:-(target_win-1)])
+    print(f'total r2 score : {r2}')
+    print(f'individual scores : {pipe_scores}')
+    
