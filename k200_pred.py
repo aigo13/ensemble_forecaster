@@ -96,15 +96,15 @@ if __name__ == "__main__":
     main_ensemble = EnsemblePredictor(data_df[:-(target_win-1)], target_col)   
 
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯    
-    ku.add_ridge_based_pipe(main_ensemble, data_df, ts_embed)
+    ku.add_ridge_based_pipe(main_ensemble, ts_embed)
     # kernel-ridge with RBF
-    ku.add_kridge_based_pipe(main_ensemble, data_df, ts_embed)    
+    ku.add_kridge_based_pipe(main_ensemble, ts_embed)    
     # RandomForest 계열 추가
-    ku.add_rf_based_pipe(main_ensemble, data_df, ts_embed)
+    ku.add_rf_based_pipe(main_ensemble, ts_embed)
     # SVR 계열 추가
-    ku.add_svr_based_pipe(main_ensemble, data_df, ts_embed)
+    ku.add_svr_based_pipe(main_ensemble, ts_embed)
     # XGBoost 계열 추가
-    ku.add_xgb_based_pipe(main_ensemble, data_df, ts_embed)    
+    ku.add_xgb_based_pipe(main_ensemble, ts_embed)    
     
     print('--> Build Ensemble(Simple Avg)')
     main_ensemble.build_ensemble(SimpleAvgEnsemble())

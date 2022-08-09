@@ -56,7 +56,7 @@ def embed_data(df : pd.DataFrame, target_col : tuple, eb_size : int):
     return (df, col_list)
 
 # Ridge Regressor 계열 base learner 추가
-def add_ridge_based_pipe(ensemble, data_df, ts_embed):
+def add_ridge_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "RIDGE"    
     alpha = 0.1
@@ -163,7 +163,7 @@ def add_ridge_based_pipe(ensemble, data_df, ts_embed):
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)    
 
 # Kernel Ridge Regressor 계열 base learner 추가
-def add_kridge_based_pipe(ensemble, data_df, ts_embed):
+def add_kridge_based_pipe(ensemble, ts_embed):
     # RBF kernel을 사용하는 kernel ridge
     prefix = "KRIDGE"    
     
@@ -275,7 +275,7 @@ def add_kridge_based_pipe(ensemble, data_df, ts_embed):
                                 [KernelRidge(kernel=RBF())], features=feat) 
 
 # Random Forest Regressor 계열 base learner 추가
-def add_rf_based_pipe(ensemble, data_df, ts_embed):
+def add_rf_based_pipe(ensemble, ts_embed):
     # RBF kernel을 사용하는 kernel ridge
     prefix = "RFR" 
     min_samples = 5
@@ -396,7 +396,7 @@ def add_rf_based_pipe(ensemble, data_df, ts_embed):
 
 # XGBoost 계열 base learner 추가
 # MultiOutput으로 wrapping
-def add_xgb_based_pipe(ensemble, data_df, ts_embed):
+def add_xgb_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "XGB"    
     alpha = 0.5
@@ -514,7 +514,7 @@ def add_xgb_based_pipe(ensemble, data_df, ts_embed):
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
                                 features=feat)
 # SVR based pipe
-def add_svr_based_pipe(ensemble, data_df, ts_embed):
+def add_svr_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "SVR"    
     
