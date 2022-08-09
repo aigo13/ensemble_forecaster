@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 
 from ensemble import UnionPipe
 
-class MyEnsembleModel:
+class EnsemblePredictor:
     """
         Data 및 model을 연결하는 pipeline
     """
@@ -74,6 +74,7 @@ class MyEnsembleModel:
         
         a_pipe = Pipeline(steps=steps)
         # 추가
+        #print(a_pipe)
         self.pipelines[p_name] = (x_feat, a_pipe)
         return self
 
