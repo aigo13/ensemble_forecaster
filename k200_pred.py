@@ -131,6 +131,15 @@ def fit_predictor(data_df, fit_start, fit_end, target_win, target_col, ts_embed)
     fitted_y = main_ensemble.y_fitted_all
     
     return (fitted_model, fitted_y)
+
+# predict
+def predict(data_df, model, target_dates):
+    dates_d = [dt.strptime(x, "%Y%m%d") for x in target_dates]    
+    y_pred = []
+    for d in dates_d:
+        yy = model.predict(data_df[data_df.index == d])        
+        y_pred.append(yy[0]) # matrix 형태로 넘어옴
+    return np.array(y_pred)
     
 #### main
 if __name__ == "__main__":
@@ -148,9 +157,10 @@ if __name__ == "__main__":
                                                 target_col=target_col,
                                                 ts_embed=ts_embed)    
         
-    #[TODO] predict 함수 빼내기
+    # predict
     print('---> predict')
-    predicted = fitted_ensemble.predict(data_df[-(target_win-1):])
+    #predicted = fitted_ensemble.predict(data_df[-(target_win-1):])
+    predicted = predict(data_df, fitted_ensemble, ['20220624', '20220627'])
     pred_all = fitted_ensemble.predict(data_df[:-(target_win-1)])
 
     # [TODO] Score 함수 구현
