@@ -400,6 +400,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "XGB"    
     alpha = 0.5
+    max_depth = 5
     
     # 1번 Vol
     p_name = "_".join([prefix, "01"])
@@ -414,7 +415,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
     
     # 2번 FX
@@ -432,7 +433,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
     
     # 3번 WTI
@@ -449,7 +450,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
     
     # 4번 S&P500
@@ -467,7 +468,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
     
     # 5번 CDS
@@ -483,7 +484,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
     
     # 6번 FULL
@@ -511,7 +512,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         
     print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()],
-                                [MultiOutputRegressor(XGBRegressor(alpha=alpha))], 
+                                [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
 # SVR based pipe
 def add_svr_based_pipe(ensemble, ts_embed):

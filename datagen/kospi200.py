@@ -193,11 +193,12 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     (Dataframe, Dataframe) 원본 데이터를 담고있는 dataframe과 EWM 스무딩된 데이터의 dataframe
 
     """
-    df = LoadIndexDB(start_str, end_str, convert_dt=True, dropna=True)    
-    df2 = LoadFXDB(start_str, end_str, convert_dt=True, dropna=True)
-    df3 = LoadCrudeDB(start_str, end_str, convert_dt=True, dropna=True)
-    df4 = LoadSpxDB(start_str, end_str, convert_dt=True, dropna=True)
-    df5 = LoadCdsDB(start_str, end_str, convert_dt=True, dropna=True)
+    convert_dt=True
+    df = LoadIndexDB(start_str, end_str, convert_dt=convert_dt, dropna=True)    
+    df2 = LoadFXDB(start_str, end_str, convert_dt=convert_dt, dropna=True)
+    df3 = LoadCrudeDB(start_str, end_str, convert_dt=convert_dt, dropna=True)
+    df4 = LoadSpxDB(start_str, end_str, convert_dt=convert_dt, dropna=True)
+    df5 = LoadCdsDB(start_str, end_str, convert_dt=convert_dt, dropna=True)
     
     df = pd.concat([df, df2, df3, df4, df5], axis=1)    
     # KOSPI200 기준으로 클린즈, 그 외는 interpolation
@@ -277,6 +278,12 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
     # Final Cleanse
 #    df.dropna(inplace=True)
 #    ewm_df.dropna(inplace=True)
+    # index setting
+    
+    # if convert_dt == True:
+    #     df = df.set_index("STD_DT2")
+    # else:
+    #     df = df.set_index("STD_DT")
     
     if save_file == True:
         file_nm = [start_str, end_str, 'k200.csv']
