@@ -17,6 +17,8 @@ from ensemble import SimpleAvgEnsemble
 from datagen import load_k200_data
 import k200_util as ku
 
+#import IPython as ipy
+
 # kospi200 data 불러오기
 def load_data_k200(start_dt, end_dt, rolling_win=20, from_file=False, path=None):    
     if from_file == True and path is not None:
@@ -29,7 +31,7 @@ def load_data_k200(start_dt, end_dt, rolling_win=20, from_file=False, path=None)
         end_d = dt.strptime(end_dt, '%Y%m%d')
         df = df[(df.index >= start_d) & (df.index <= end_d)]
     else:
-        df = load_k200_data(start_dt, end_dt, rolling_win=rolling_win, save_file=True)
+        orig_df, df = load_k200_data(start_dt, end_dt, rolling_win=rolling_win, save_file=True)
     
     return df
 
@@ -46,6 +48,8 @@ def calc_target_val(df, window, concat=True):
     # 예측치이므로 윈도우만큼 땡겨서 붙여줌
     df_index = df.index[:-(window-1)]
     mvdf = mvdf.set_index(df_index)
+    #mvdf = mvdf.shift(periods=-1)
+    #mvdf.dropna(inplace=True)
     
     if concat == True:
         df = pd.concat([df, mvdf], axis=1)    
@@ -136,23 +140,27 @@ def fit_predictor(data_df, fit_start, fit_end, target_win, target_col, ts_embed)
 def predict(data_df, model, target_dates):
     dates_d = [dt.strptime(x, "%Y%m%d") for x in target_dates]    
     y_pred = []
+    y_pred_all = []
+    
     for d in dates_d:
         yy = model.predict(data_df[data_df.index == d])        
         y_pred.append(yy[0]) # matrix 형태로 넘어옴
-    return np.array(y_pred)
+        y_pred_all.append(model.y_pred_all[0])
+        
+    return np.array(y_pred), np.array(y_pred_all)
     
 #### main
 if __name__ == "__main__":
 
     rolling_win = 20 # 데이터 통계 window
-    target_win = 5 # 예측치를 만들 total windown
+    target_win = 6 # 예측치를 만들 total windown
     ts_embed = True # embed를 할 경우 rolling_win만큼 앞이 잘려나감.
     # data load
     data_df, target_col = load_data("20030101", "20220627", 
                                     rolling_win=rolling_win, 
                                     target_win=target_win, 
                                     embed_ts=ts_embed)
-    fitted_ensemble, fitted_y =  fit_predictor(data_df, "20030101", "20220621",                                                 
+    fitted_ensemble, fitted_y =  fit_predictor(data_df, "20030101", "20220620",                                                 
                                                 target_win=target_win, 
                                                 target_col=target_col,
                                                 ts_embed=ts_embed)    
@@ -160,7 +168,7 @@ if __name__ == "__main__":
     # predict
     print('---> predict')
     #predicted = fitted_ensemble.predict(data_df[-(target_win-1):])
-    predicted = predict(data_df, fitted_ensemble, ['20220624', '20220627'])
+    predicted, predicted_all = predict(data_df, fitted_ensemble, ['20220624', '20220627'])
     pred_all = fitted_ensemble.predict(data_df[:-(target_win-1)])
 
     # [TODO] Score 함수 구현

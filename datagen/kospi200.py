@@ -290,8 +290,8 @@ def load_k200_data(start_str, end_str, rolling_win=20, save_file=False):
         efile_nm = [start_str, end_str, 'k200ewm.csv']
         dfile = '_'.join(file_nm)
         efile = '_'.join(efile_nm)
-        df.to_csv('../data/' + dfile)
-        ewm_df.to_csv('../data/' + efile)
+        df.to_csv('./data/' + dfile)
+        ewm_df.to_csv('./data/' + efile)
         
 #        df.to_parquet('../data/' + dfile, compression='gzip')
 #        df.to_parquet('../data/' + efile, compression='gzip')

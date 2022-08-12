@@ -144,9 +144,9 @@ class EnsemblePredictor:
 
         """
         # ensemble pipeline의 predict를 호출
-        y_pred = self.union_pipe.predict(data=data)        
+        self.y_pred_all = self.union_pipe.predict(data=data)     
         # Ensemble model의 predict 호출
-        y_pred = self.ensemble.predict(X=y_pred)
+        y_pred = self.ensemble.predict(X=self.y_pred_all)
         # predict 결과 return
         return y_pred
     
