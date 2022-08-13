@@ -12,6 +12,7 @@ from datetime import datetime as dt
 # ensemble models
 from ensemble import EnsemblePredictor
 from ensemble import SimpleAvgEnsemble
+from sklearn.ensemble import RandomForestRegressor
 
 # data and utility
 from datagen import load_k200_data
@@ -129,6 +130,7 @@ def fit_predictor(data_df, fit_start, fit_end, target_win, target_col, ts_embed)
     
     print('--> Build Ensemble(Simple Avg)')
     main_ensemble.build_ensemble(SimpleAvgEnsemble())
+    #main_ensemble.build_ensemble(RandomForestRegressor(min_samples_leaf=10))
     
     print('---> Call fitting')
     fitted_model = main_ensemble.fit()
@@ -168,7 +170,7 @@ if __name__ == "__main__":
     # predict
     print('---> predict')
     #predicted = fitted_ensemble.predict(data_df[-(target_win-1):])
-    predicted, predicted_all = predict(data_df, fitted_ensemble, ['20220624', '20220627'])
+    predicted, predicted_all = predict(data_df, fitted_ensemble, ['20220621', '20220627'])
     pred_all = fitted_ensemble.predict(data_df[:-(target_win-1)])
 
     # [TODO] Score 함수 구현
