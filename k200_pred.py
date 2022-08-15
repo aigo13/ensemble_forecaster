@@ -18,6 +18,8 @@ from sklearn.ensemble import RandomForestRegressor
 from datagen import load_k200_data
 import k200_util as ku
 
+import time
+
 #import IPython as ipy
 
 # kospi200 data 불러오기
@@ -162,6 +164,84 @@ if __name__ == "__main__":
                                     rolling_win=rolling_win, 
                                     target_win=target_win, 
                                     embed_ts=ts_embed)
+
+    # Fit and Prediction test
+    data_df = data_df.dropna()
+    dates_arr = np.array(data_df.index)
+    # 첫 fitting limit    
+    idx = np.where(dates_arr >= np.datetime64('2011-01-01'))[0]
+
+    cnt = 0
+    # fit and predict
+    fit_dts = []
+    pred_dts = []
+    preds = []
+    pred_alls = []
+    gnd_truth = []
+    
+    for an_idx in idx:
+        if an_idx >= len(data_df) - 1:
+            print("!!!Test 완료!!!")
+            break
+
+        if cnt % 10 == 0:
+            start_t = time.time()
+
+            fit_end_dt = data_df.index[an_idx]
+            pred_dt = data_df.index[an_idx+1]
+            
+            fit_dt_str = dt.strftime(fit_end_dt, "%Y%m%d")
+            pred_dt_str = dt.strftime(pred_dt, "%Y%m%d")
+
+            print(f"{cnt+1} : fit until {fit_dt_str}, predict {pred_dt_str}")
+            
+            fitted_model, fitted_y = fit_predictor(data_df, "20030101", fit_dt_str,                                                 
+                                                        target_win=target_win, 
+                                                        target_col=target_col,
+                                                        ts_embed=ts_embed)
+            pred, pred_all = predict(data_df, fitted_model, [pred_dt_str])
+
+            end_t = time.time()
+            print(f".... {end_t-start_t:.2f} secs elapsed")
+
+            fit_dts.append(fit_end_dt)
+            pred_dts.append(pred_dt)
+            preds.append(pred)
+            pred_alls.append(pred_all)
+            gnd_truth.append(data_df.loc[pred_dt][target_col])
+        else:
+            print(f"{cnt+1} : Skipping...")
+
+        cnt += 1
+
+    # dataframe으로 정리 후 CSV 또는 XLSX로 저장
+    result_cols = ["FIT_END_DT", "PRED_DT", "TRUE_SUM", "TRUE_STD", "PRED_RET_SUM", "PRED_RET_STD"]
+    n_outs = len(pred_alls[0][0])
+    n_base = int(n_outs / len(target_col))
+
+    for i in range(n_base):
+        c1 = "_".join(["BASE", "SUM", str(i+1)])
+        c2 = "_".join(["BASE", "STD", str(i+1)])
+        result_cols.append(c1)
+        result_cols.append(c2)    
+
+    result_df = pd.DataFrame(columns=result_cols)
+    for i, fit_dt, pred_dt, pred_ret, pred_base, true_y \
+        in zip(range(len(fit_dts)), fit_dts, pred_dts, preds, pred_alls, gnd_truth):        
+        a_row = []
+        a_row.append(fit_dt)
+        a_row.append(pred_dt)
+        a_row.append(true_y[target_col[0]])
+        a_row.append(true_y[target_col[1]])
+        a_row.extend(pred_ret[0])
+        a_row.extend(pred_all[0])        
+        result_df.loc[i] = a_row
+    
+    # save result to csv file
+    file_name = dt.now().strftime("%Y-%m-%d_%H%M") + "_pred_result.csv"
+    result_df.to_csv(file_name, index=False)
+    """
+        
     fitted_ensemble, fitted_y =  fit_predictor(data_df, "20030101", "20220620",                                                 
                                                 target_win=target_win, 
                                                 target_col=target_col,
@@ -180,4 +260,5 @@ if __name__ == "__main__":
     pipe_scores = fitted_ensemble.pipe_score(data_df[:-(target_win-1)], data_df[target_col][:-(target_win-1)])
     print(f'total r2 score : {r2}')
     print(f'individual scores : {pipe_scores}')
+    """    
     

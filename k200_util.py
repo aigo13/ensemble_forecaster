@@ -72,7 +72,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['VKOSPI_em'])
         
-    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    #print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)
     
     # 2번 FX
@@ -88,7 +88,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['FX_RET_em'])
         feat.extend(_k200_feat_dict['USDKRW_V_em'])
         
-    print(f'--> adding {p_name} with features ---> FX')  
+    #print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)    
     
     # 3번 WTI
@@ -103,7 +103,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['CRUDE_F_em'])
         feat.extend(_k200_feat_dict['CRUDE_RET_em'])
         
-    print(f'--> adding {p_name} with features ---> WTI')  
+    #print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)    
     
     # 4번 S&P500
@@ -119,7 +119,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['SPX_RET_em'])
         feat.extend(_k200_feat_dict['VSPX_em'])
         
-    print(f'--> adding {p_name} with features ---> SPX')  
+    #print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)
     
     # 5번 CDS
@@ -133,7 +133,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> CDS')  
+    #print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)    
     
     # 6번 FULL
@@ -159,8 +159,9 @@ def add_ridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['VSPX_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> Full')  
+    #print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], [Ridge(alpha=alpha)], features=feat)    
+    print(f'--> added {prefix} based learners with features')  
 
 # Kernel Ridge Regressor 계열 base learner 추가
 def add_kridge_based_pipe(ensemble, ts_embed):
@@ -178,7 +179,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['VKOSPI_em'])
         
-    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    #print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat)
     
@@ -195,7 +196,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['FX_RET_em'])
         feat.extend(_k200_feat_dict['USDKRW_V_em'])
         
-    print(f'--> adding {p_name} with features ---> FX')  
+    #print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat)    
     
@@ -211,7 +212,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['CRUDE_F_em'])
         feat.extend(_k200_feat_dict['CRUDE_RET_em'])
         
-    print(f'--> adding {p_name} with features ---> WTI')  
+    #print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat)    
     
@@ -228,7 +229,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['SPX_RET_em'])
         feat.extend(_k200_feat_dict['VSPX_em'])
         
-    print(f'--> adding {p_name} with features ---> SPX')  
+    #print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat)
     
@@ -243,7 +244,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> CDS')  
+    #print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat)    
     
@@ -270,9 +271,10 @@ def add_kridge_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['VSPX_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> Full')  
+    #print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [KernelRidge(kernel=RBF())], features=feat) 
+    print(f'--> added {prefix} based learners with features')  
 
 # Random Forest Regressor 계열 base learner 추가
 def add_rf_based_pipe(ensemble, ts_embed):
@@ -292,7 +294,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['VKOSPI_em'])
         
-    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    #print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat)
@@ -310,7 +312,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['FX_RET_em'])
         feat.extend(_k200_feat_dict['USDKRW_V_em'])
         
-    print(f'--> adding {p_name} with features ---> FX')  
+    #print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat)    
@@ -327,7 +329,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['CRUDE_F_em'])
         feat.extend(_k200_feat_dict['CRUDE_RET_em'])
         
-    print(f'--> adding {p_name} with features ---> WTI')  
+    #print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat)    
@@ -345,7 +347,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['SPX_RET_em'])
         feat.extend(_k200_feat_dict['VSPX_em'])
         
-    print(f'--> adding {p_name} with features ---> SPX')  
+    #print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat)
@@ -361,7 +363,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> CDS')  
+    #print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat)    
@@ -389,10 +391,11 @@ def add_rf_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['VSPX_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> Full')  
+    #print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [RandomForestRegressor(min_samples_leaf=min_samples)], 
                                 features=feat) 
+    print(f'--> added {prefix} based learners with features')  
 
 # XGBoost 계열 base learner 추가
 # MultiOutput으로 wrapping
@@ -413,7 +416,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['VKOSPI_em'])
         
-    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    #print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
@@ -431,7 +434,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['FX_RET_em'])
         feat.extend(_k200_feat_dict['USDKRW_V_em'])
         
-    print(f'--> adding {p_name} with features ---> FX')  
+    #print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
@@ -448,7 +451,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['CRUDE_F_em'])
         feat.extend(_k200_feat_dict['CRUDE_RET_em'])
         
-    print(f'--> adding {p_name} with features ---> WTI')  
+    #print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
@@ -466,7 +469,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['SPX_RET_em'])
         feat.extend(_k200_feat_dict['VSPX_em'])
         
-    print(f'--> adding {p_name} with features ---> SPX')  
+    #print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
@@ -482,7 +485,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> CDS')  
+    #print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
@@ -510,10 +513,12 @@ def add_xgb_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['VSPX_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> Full')  
+    #print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()],
                                 [MultiOutputRegressor(XGBRegressor(alpha=alpha, max_depth=max_depth))], 
                                 features=feat)
+    print(f'--> added {prefix} based learners with features')
+
 # SVR based pipe
 def add_svr_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
@@ -530,7 +535,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['VKOSPI_em'])
         
-    print(f'--> adding {p_name} with features ---> RET, VOL')  
+    #print(f'--> adding {p_name} with features ---> RET, VOL')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(SVR())], 
                                 features=feat)
@@ -548,7 +553,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['FX_RET_em'])
         feat.extend(_k200_feat_dict['USDKRW_V_em'])
         
-    print(f'--> adding {p_name} with features ---> FX')  
+    #print(f'--> adding {p_name} with features ---> FX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(SVR())], 
                                 features=feat)
@@ -565,7 +570,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['CRUDE_F_em'])
         feat.extend(_k200_feat_dict['CRUDE_RET_em'])
         
-    print(f'--> adding {p_name} with features ---> WTI')  
+    #print(f'--> adding {p_name} with features ---> WTI')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(SVR())], 
                                 features=feat)
@@ -583,7 +588,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['SPX_RET_em'])
         feat.extend(_k200_feat_dict['VSPX_em'])
         
-    print(f'--> adding {p_name} with features ---> SPX')  
+    #print(f'--> adding {p_name} with features ---> SPX')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(SVR())], 
                                 features=feat)
@@ -599,7 +604,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['KOSPI2_RET_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> CDS')  
+    #print(f'--> adding {p_name} with features ---> CDS')  
     ensemble.add_base_pipe(p_name, [StandardScaler()], 
                                 [MultiOutputRegressor(SVR())], 
                                 features=feat)
@@ -627,8 +632,9 @@ def add_svr_based_pipe(ensemble, ts_embed):
         feat.extend(_k200_feat_dict['VSPX_em'])
         feat.extend(_k200_feat_dict['ROKCDS_em'])        
         
-    print(f'--> adding {p_name} with features ---> Full')  
+    #print(f'--> adding {p_name} with features ---> Full')  
     ensemble.add_base_pipe(p_name, [StandardScaler()],
                                 [MultiOutputRegressor(SVR())],
                                 features=feat)
+    print(f'--> added {prefix} based learners with features')  
    
