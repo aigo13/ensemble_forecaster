@@ -169,7 +169,7 @@ if __name__ == "__main__":
     data_df = data_df.dropna()
     dates_arr = np.array(data_df.index)
     # 첫 fitting limit    
-    idx = np.where(dates_arr >= np.datetime64('2011-01-01'))[0]
+    idx = np.where(dates_arr >= np.datetime64('2012-01-01'))[0]
 
     cnt = 0
     # fit and predict
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     gnd_truth = []
     
     for an_idx in idx:
-        if an_idx >= len(data_df) - 1:
+        if an_idx >= len(data_df) - target_win:
             print("!!!Test 완료!!!")
             break
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
             start_t = time.time()
 
             fit_end_dt = data_df.index[an_idx]
-            pred_dt = data_df.index[an_idx+1]
+            pred_dt = data_df.index[an_idx+target_win]
             
             fit_dt_str = dt.strftime(fit_end_dt, "%Y%m%d")
             pred_dt_str = dt.strftime(pred_dt, "%Y%m%d")
@@ -202,7 +202,8 @@ if __name__ == "__main__":
             pred, pred_all = predict(data_df, fitted_model, [pred_dt_str])
 
             end_t = time.time()
-            print(f".... {end_t-start_t:.2f} secs elapsed")
+            print(f".... {end_t-start_t:.2f} secs elapsed -> pred : [{pred[0][0]:.4f} {pred[0][1]:.4f}]" + 
+                  f" truth : [{data_df.loc[pred_dt][target_col]['T_KOSPI2_RET_SUM']:.4f} {data_df.loc[pred_dt][target_col]['T_KOSPI2_RET_STD']:.4f}]")
 
             fit_dts.append(fit_end_dt)
             pred_dts.append(pred_dt)
@@ -240,6 +241,15 @@ if __name__ == "__main__":
     # save result to csv file
     file_name = dt.now().strftime("%Y-%m-%d_%H%M") + "_pred_result.csv"
     result_df.to_csv(file_name, index=False)
+    
+    # calc r2 score for predictions
+    y_true = np.array(result_df[["TRUE_SUM", "TRUE_STD"]])
+    y_hat = np.array(result_df[["PRED_RET_SUM", "PRED_RET_STD"]])
+    
+    u = ((y_true - y_hat)**2).sum()
+    v = ((y_true - y_true.mean())**2).sum()
+    r2 = 1. - u/v
+    print(f" === Final r2 score of prediction : {r2:.4f}")
     """
         
     fitted_ensemble, fitted_y =  fit_predictor(data_df, "20030101", "20220620",                                                 
