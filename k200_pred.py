@@ -63,9 +63,16 @@ def calc_target_val(df, window, concat=True):
 # data 읽어서 가져오기
 def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):    
     # file version
+    
     df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win, \
                         from_file=True, \
                         path="./data/20030101_20220627_k200ewm.csv")
+       
+    """
+    df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win, \
+                        from_file=True, \
+                        path="./data/20030101_20220627_k200.csv")
+    """
     # db version
     #df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win)
 
@@ -121,8 +128,10 @@ def fit_predictor(data_df, fit_start, fit_end, target_win, target_col, ts_embed)
 
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯    
     ku.add_ridge_based_pipe(main_ensemble, ts_embed)
-    # kernel-ridge with RBF
-    ku.add_kridge_based_pipe(main_ensemble, ts_embed)    
+    # kernel-ridge with RBF --> Too bad prediction
+    #ku.add_kridge_based_pipe(main_ensemble, ts_embed)
+    # GLM based -> taget negative 문제
+    #ku.add_glm_based_pipe(main_ensemble, ts_embed)
     # RandomForest 계열 추가
     ku.add_rf_based_pipe(main_ensemble, ts_embed)
     # SVR 계열 추가
@@ -132,13 +141,15 @@ def fit_predictor(data_df, fit_start, fit_end, target_win, target_col, ts_embed)
     
     print('--> Build Ensemble(Simple Avg)')
     main_ensemble.build_ensemble(SimpleAvgEnsemble())
-    #main_ensemble.build_ensemble(RandomForestRegressor(min_samples_leaf=10))
+    #print('--> Build Ensemble(Random Forest)')
+    #main_ensemble.build_ensemble(RandomForestRegressor(min_samples_leaf=5))
     
     print('---> Call fitting')
     fitted_model = main_ensemble.fit()
     fitted_y = main_ensemble.y_fitted_all
+    r2_list = main_ensemble.pipe_score(target_df, target_df[target_col])    
     
-    return (fitted_model, fitted_y)
+    return (fitted_model, fitted_y, r2_list)
 
 # predict
 def predict(data_df, model, target_dates):
@@ -146,6 +157,7 @@ def predict(data_df, model, target_dates):
     y_pred = []
     y_pred_all = []
     
+    print('---> Call predicting')
     for d in dates_d:
         yy = model.predict(data_df[data_df.index == d])        
         y_pred.append(yy[0]) # matrix 형태로 넘어옴
@@ -169,7 +181,7 @@ if __name__ == "__main__":
     data_df = data_df.dropna()
     dates_arr = np.array(data_df.index)
     # 첫 fitting limit    
-    idx = np.where(dates_arr >= np.datetime64('2012-01-01'))[0]
+    idx = np.where(dates_arr >= np.datetime64('2022-06-01'))[0]
 
     cnt = 0
     # fit and predict
@@ -178,6 +190,7 @@ if __name__ == "__main__":
     preds = []
     pred_alls = []
     gnd_truth = []
+    r2_vals = []
     
     for an_idx in idx:
         if an_idx >= len(data_df) - target_win:
@@ -188,14 +201,14 @@ if __name__ == "__main__":
             start_t = time.time()
 
             fit_end_dt = data_df.index[an_idx]
-            pred_dt = data_df.index[an_idx+target_win]
+            pred_dt = data_df.index[an_idx+target_win-1]
             
             fit_dt_str = dt.strftime(fit_end_dt, "%Y%m%d")
             pred_dt_str = dt.strftime(pred_dt, "%Y%m%d")
 
             print(f"{cnt+1} : fit until {fit_dt_str}, predict {pred_dt_str}")
             
-            fitted_model, fitted_y = fit_predictor(data_df, "20030101", fit_dt_str,                                                 
+            fitted_model, fitted_y, r2_list = fit_predictor(data_df, "20030101", fit_dt_str,                                                 
                                                         target_win=target_win, 
                                                         target_col=target_col,
                                                         ts_embed=ts_embed)
@@ -210,6 +223,11 @@ if __name__ == "__main__":
             preds.append(pred)
             pred_alls.append(pred_all)
             gnd_truth.append(data_df.loc[pred_dt][target_col])
+            
+            tmp_l = []
+            for _, an_r2 in r2_list: # 일단 순서대로 들어온다고 가정하긴 함
+                tmp_l.append(an_r2)
+            r2_vals.append(tmp_l)
         else:
             print(f"{cnt+1} : Skipping...")
 
@@ -222,20 +240,25 @@ if __name__ == "__main__":
 
     for i in range(n_base):
         c1 = "_".join(["BASE", "SUM", str(i+1)])
-        c2 = "_".join(["BASE", "STD", str(i+1)])
+        c2 = "_".join(["BASE", "STD", str(i+1)])        
         result_cols.append(c1)
-        result_cols.append(c2)    
+        result_cols.append(c2)        
+        
+    for i in range(n_base):
+        c3 = "_".join(["FIT_SCORE", str(i+1)])
+        result_cols.append(c3)
 
     result_df = pd.DataFrame(columns=result_cols)
-    for i, fit_dt, pred_dt, pred_ret, pred_base, true_y \
-        in zip(range(len(fit_dts)), fit_dts, pred_dts, preds, pred_alls, gnd_truth):        
+    for i, fit_dt, pred_dt, pred_ret, pred_base, true_y, an_r2l \
+        in zip(range(len(fit_dts)), fit_dts, pred_dts, preds, pred_alls, gnd_truth, r2_vals):
         a_row = []
         a_row.append(fit_dt)
         a_row.append(pred_dt)
         a_row.append(true_y[target_col[0]])
         a_row.append(true_y[target_col[1]])
         a_row.extend(pred_ret[0])
-        a_row.extend(pred_all[0])        
+        a_row.extend(pred_base[0])
+        a_row.extend(an_r2l)
         result_df.loc[i] = a_row
     
     # save result to csv file
@@ -250,6 +273,22 @@ if __name__ == "__main__":
     v = ((y_true - y_true.mean())**2).sum()
     r2 = 1. - u/v
     print(f" === Final r2 score of prediction : {r2:.4f}")
+    
+    # base learner별 prediction score
+    r2b_list = []
+    for i in range(n_base):
+        colb = ["_".join(["BASE", "SUM", str(i+1)]), "_".join(["BASE", "STD", str(i+1)])]
+        y_hatb = np.array(result_df[colb])
+        
+        ub = ((y_true - y_hatb)**2).sum()        
+        r2b = 1. - ub/v
+        r2b_list.append(r2b)
+    
+    # 출력
+    print("--- Base learer prediction scores ---")
+    for i, an_r2 in zip(range(n_base), r2b_list):
+        print(f" - Base {i+1} : {an_r2:.4f}")
+    
     """
         
     fitted_ensemble, fitted_y =  fit_predictor(data_df, "20030101", "20220620",                                                 
