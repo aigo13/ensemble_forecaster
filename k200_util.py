@@ -41,6 +41,8 @@ _k200_feat_dict = {
 _embbed_target = ('KOSPI2', 'KOSPI2_RET', 'VKOSPI', 'USDKRW', 'USDKRW_V', 'FX_RET', 
                 'CRUDE_F', 'CRUDE_RET', 'SPX', 'VSPX', 'SPX_RET', 'ROKCDS')
 
+_target_rel = [] # target관련 정보. 무조건 포함되도록 함
+
 # time seriese embedding
 # embedding으로 추가된 column의 dict를 돌려준다.
 def embed_data(df : pd.DataFrame, target_col : tuple, eb_size : int):
@@ -67,6 +69,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -81,6 +84,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -97,6 +101,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -112,6 +117,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -128,6 +134,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -145,6 +152,7 @@ def add_ridge_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -168,13 +176,14 @@ def add_ridge_based_pipe(ensemble, ts_embed):
 def add_kridge_based_pipe(ensemble, ts_embed):
     # RBF kernel을 사용하는 kernel ridge
     prefix = "KRIDGE"    
-    a = 0.05
+    a = 0.1
 
     # 1번 Vol
     p_name = "_".join([prefix, "01"])
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -190,6 +199,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -207,6 +217,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -223,6 +234,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -240,6 +252,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -258,6 +271,7 @@ def add_kridge_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -290,6 +304,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -306,6 +321,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -324,6 +340,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -341,6 +358,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -359,6 +377,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -378,6 +397,7 @@ def add_rf_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -412,6 +432,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -428,6 +449,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -446,6 +468,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -463,6 +486,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -481,6 +505,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -500,6 +525,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -525,13 +551,14 @@ def add_xgb_based_pipe(ensemble, ts_embed):
 def add_svr_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "SVR"
-    c_v = 0.1    
+    c_v = 0.1
     
     # 1번 Vol
     p_name = "_".join([prefix, "01"])
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -548,6 +575,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -566,6 +594,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -583,6 +612,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -601,6 +631,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -620,6 +651,7 @@ def add_svr_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -654,6 +686,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['VOL'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -670,6 +703,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -688,6 +722,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['COM'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -705,6 +740,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['FIDX'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -723,6 +759,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat = _k200_feat_dict['KOSPI2'].copy()
     feat.extend(_k200_feat_dict['RET'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])
@@ -742,6 +779,7 @@ def add_glm_based_pipe(ensemble, ts_embed):
     feat.extend(_k200_feat_dict['FX'])
     feat.extend(_k200_feat_dict['FIDX'])
     feat.extend(_k200_feat_dict['CDS'])
+    feat.extend(_target_rel)
     # embedding 값들이 있을 경우 해당 값도 포함
     if ts_embed == True:
         feat.extend(_k200_feat_dict['KOSPI2_em'])

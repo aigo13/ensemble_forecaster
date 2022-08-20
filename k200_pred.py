@@ -40,7 +40,7 @@ def load_data_k200(start_dt, end_dt, rolling_win=20, from_file=False, path=None)
 
 # target window만큼의 향후 return sum, real vol 계산
 # KOSPI2_RET을 사용
-def calc_target_val(df, window, concat=True):
+def calc_target_val(df, window):
     target = 'KOSPI2_RET'
     mvdf = pd.DataFrame()
     #mvdf['T_' + target + "_AVG"] = df[target].rolling(window).mean()
@@ -50,15 +50,18 @@ def calc_target_val(df, window, concat=True):
     
     # 예측치이므로 윈도우만큼 땡겨서 붙여줌
     df_index = df.index[:-(window-1)]
-    mvdf = mvdf.set_index(df_index)
-    #mvdf = mvdf.shift(periods=-1)
-    #mvdf.dropna(inplace=True)
+    mvdf_t = mvdf.set_index(df_index)
+    # 예측치 아닌 부부은 정보로 취합
+    df_index2 = df.index[(window-1):]
+    mvdf_o = mvdf.set_index(df_index2)
+    col = [ "_".join([target, str(window), "SUM"]), "_".join([target, str(window), "STD"])]
+    mvdf_o.columns = col
+    # 정보 포함
+    ku._target_rel.extend(col)
     
-    if concat == True:
-        df = pd.concat([df, mvdf], axis=1)    
-        return df
-    else:
-        return mvdf
+    df = pd.concat([df, mvdf_o, mvdf_t], axis=1)
+    return df
+    
 
 # data 읽어서 가져오기
 def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):    
