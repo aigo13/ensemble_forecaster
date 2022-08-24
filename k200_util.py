@@ -62,7 +62,7 @@ def embed_data(df : pd.DataFrame, target_col : tuple, eb_size : int):
 def add_ridge_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "RIDGE"    
-    alpha = 0.1
+    alpha = 0.3
     
     # 1번 Vol
     p_name = "_".join([prefix, "01"])
@@ -551,7 +551,7 @@ def add_xgb_based_pipe(ensemble, ts_embed):
 def add_svr_based_pipe(ensemble, ts_embed):
     # Ridge 계열 추가 -> embedding 된 data도 있으므로 괜찮을 듯
     prefix = "SVR"
-    c_v = 0.1
+    c_v = 0.3
     
     # 1번 Vol
     p_name = "_".join([prefix, "01"])

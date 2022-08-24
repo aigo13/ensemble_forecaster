@@ -51,15 +51,16 @@ def calc_target_val(df, window):
     # 예측치이므로 윈도우만큼 땡겨서 붙여줌
     df_index = df.index[:-(window-1)]
     mvdf_t = mvdf.set_index(df_index)
-    # 예측치 아닌 부부은 정보로 취합
-    df_index2 = df.index[(window-1):]
-    mvdf_o = mvdf.set_index(df_index2)
-    col = [ "_".join([target, str(window), "SUM"]), "_".join([target, str(window), "STD"])]
-    mvdf_o.columns = col
+    # 예측치 아닌 부부은 정보로 취합 : 220823 - 퍼포먼스 악영향(why?)
+    #df_index2 = df.index[(window-1):]
+    #mvdf_o = mvdf.set_index(df_index2)
+    #col = [ "_".join([target, str(window), "SUM"]), "_".join([target, str(window), "STD"])]
+    #mvdf_o.columns = col
     # 정보 포함
-    ku._target_rel.extend(col)
-    
-    df = pd.concat([df, mvdf_o, mvdf_t], axis=1)
+    #ku._target_rel.extend(col)
+
+    df = pd.concat([df, mvdf_t], axis=1)
+    #df = pd.concat([df, mvdf_o, mvdf_t], axis=1)
     return df
     
 
@@ -184,7 +185,7 @@ if __name__ == "__main__":
     data_df = data_df.dropna()
     dates_arr = np.array(data_df.index)
     # 첫 fitting limit    
-    idx = np.where(dates_arr >= np.datetime64('2022-06-01'))[0]
+    idx = np.where(dates_arr >= np.datetime64('2012-01-01'))[0]
 
     cnt = 0
     # fit and predict
