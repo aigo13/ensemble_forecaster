@@ -30,7 +30,7 @@ if __name__ == "__main__":
     f, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(feat_df.corr(), annot=True, fmt=".3f", ax=ax)
     plt.show()
-    plt.savefig("./fig/data_corr.png")
+    f.savefig("./fig/data_corr.png")
     
     # 방향 정확도
     pred_sum = np.array(result_df["PRED_RET_SUM"])
