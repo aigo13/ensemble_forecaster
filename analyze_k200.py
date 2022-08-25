@@ -43,8 +43,8 @@ if __name__ == "__main__":
     # 가장 안 맞고 잘 맞는 곳
     min_idx = np.argmin(mult)
     max_idx = np.argmax(mult)
-    worst_dt = result_df["PRED_DT"].iloc[min_idx]
-    best_dt = result_df["PRED_DT"].iloc[max_idx]
+    worst_dt = result_df.index[min_idx]
+    best_dt = result_df.index[max_idx]
     
     print(f"Worst date : {worst_dt}, Best date : {best_dt} ")
     
