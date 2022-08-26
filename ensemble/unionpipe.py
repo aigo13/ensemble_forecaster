@@ -61,8 +61,11 @@ class UnionPipe:
         UnionPipe object
         """
         # [TODO] parallel?
-        for idx, name, x_feat, learner in self._iter():
+        for idx, name, x_feat, learner in self._iter():            
             X = np.array(data[x_feat])
+            #print(x_feat)
+            #print(data[x_feat].columns)
+            assert len(x_feat) == len(X[0]) # for error check
             fitted_learner = learner.fit(X, y)
             self.learners[idx] = (name, x_feat, fitted_learner) # learner update
             
@@ -103,7 +106,8 @@ class UnionPipe:
         y_pred = []
         y_len = len(data)
         for idx, name, x_feat, learner in self._iter():
-            xx = np.array(data[x_feat])            
+            xx = np.array(data[x_feat])
+            assert len(x_feat) == len(xx[0])        
             y_l = learner.predict(xx) # ndarray return 가정
             y_l = y_l.reshape(y_len, -1) # reshape (n_samples, n_output)
             y_pred.append(y_l) # learner별 결과를 행으로 붙여줌        

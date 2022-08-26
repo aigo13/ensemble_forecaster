@@ -81,7 +81,7 @@ def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):
     #df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win)
 
     if embed == True:
-        eb_ret = ku.embed_data(df, ku._embbed_target, rolling_win)
+        eb_ret = ku.embed_data(df, ku._embbed_target, rolling_win*2) # 220826 rolling * 2만큰 embedding
         df = eb_ret[0]
         eb_dict = eb_ret[1]
 
@@ -267,7 +267,7 @@ if __name__ == "__main__":
     
     # save result to csv file
     file_name = dt.now().strftime("%Y-%m-%d_%H%M") + "_pred_result.csv"
-    result_df.to_csv("./result" + file_name, index=False)
+    result_df.to_csv("./result/" + file_name, index=False)
     
     # calc r2 score for predictions
     y_true = np.array(result_df[["TRUE_SUM", "TRUE_STD"]])
