@@ -84,6 +84,7 @@ class UnionPipe:
         scores = []
         for idx, name, x_feat, learner in self._iter():
             x_pipe = np.array(X[x_feat])
+            assert len(x_feat) == len(x_pipe[0]) # for error check
             a_score = learner.score(x_pipe, y)
             scores.append((name, a_score))
         
@@ -107,7 +108,7 @@ class UnionPipe:
         y_len = len(data)
         for idx, name, x_feat, learner in self._iter():
             xx = np.array(data[x_feat])
-            assert len(x_feat) == len(xx[0])        
+            assert len(x_feat) == len(xx[0]) # for error check       
             y_l = learner.predict(xx) # ndarray return 가정
             y_l = y_l.reshape(y_len, -1) # reshape (n_samples, n_output)
             y_pred.append(y_l) # learner별 결과를 행으로 붙여줌        
