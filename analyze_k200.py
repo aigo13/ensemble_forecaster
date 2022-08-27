@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def load_result():
-    file = "./result/2022-08-25_0047_pred_result.csv"
+    file = "./result/2022-08-28_0046_pred_result.csv"
     result_df = pd.read_csv(file, index_col="PRED_DT")
     return result_df
 
