@@ -81,7 +81,7 @@ def prepare_k200(start_dt, end_dt, rolling_win=20, embed=False):
     #df = load_data_k200(start_dt, end_dt, rolling_win=rolling_win)
 
     if embed == True:
-        eb_ret = ku.embed_data(df, ku._embbed_target, rolling_win*2) # 220826 rolling * 2만큰 embedding
+        eb_ret = ku.embed_data(df, ku._embbed_target, rolling_win) # 220826 rolling * 2만큰 embedding -> not good
         df = eb_ret[0]
         eb_dict = eb_ret[1]
 
