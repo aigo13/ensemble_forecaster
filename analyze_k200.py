@@ -149,6 +149,24 @@ if __name__ == "__main__":
     n_right = len(mult[mult >= 0])
     acc = float(n_right) / float(len(mult)) * 100.0
     print(f"-- Direction accuracy : {acc:.2f}%, {n_right} of {len(mult)}")
+
+    # 하락 정확도
+    n_idx = np.where(true_sum <= 0.0)[0]
+    n_pred = pred_sum[n_idx]
+    n_true = true_sum[n_idx]
+    mult2 = n_pred * n_true
+    n_right = len(mult2[mult2 >= 0])
+    acc = float(n_right) / float(len(mult2)) * 100.0
+    print(f"-- Up direction accuracy : {acc:.2f}%, {n_right} of {len(mult2)}")
+
+    # 상승 정확도
+    p_idx = np.where(true_sum > 0.0)[0]
+    p_pred = pred_sum[p_idx]
+    p_true = true_sum[p_idx]
+    mult3 = p_pred * p_true
+    n_right = len(mult3[mult3 >= 0])
+    acc = float(n_right) / float(len(mult3)) * 100.0
+    print(f"-- Down direction accuracy : {acc:.2f}%, {n_right} of {len(mult3)}")
     
     # 가장 안 맞고 잘 맞는 곳
     min_idx = np.argmin(mult)
@@ -162,6 +180,7 @@ if __name__ == "__main__":
     sorted_m.sort()    
     
     # plot and save
+    """
     for a_date in result_df.index:
         # plot_prediction(a_date, result_df, data_df, raw_df, 6)
         # break
@@ -170,7 +189,7 @@ if __name__ == "__main__":
         except:
             print(f"err -> {a_date}")
             continue # 다음으로 진행
-    
+    """
     
     
     
