@@ -12,8 +12,8 @@ import pandas as pd
     connect and close db
 '''
 def ConnectDB():
-    test_dsn = ora.makedsn('10.6.4.94', 1531, 'HDSTCS1')
-    conn = ora.connect('HDRVX', 'HDRVX###3', test_dsn)
+    test_dsn = ora.makedsn('XX.X.X.XX', 1234, 'XXXXXX')
+    conn = ora.connect('#####', '#######', test_dsn)
     return conn
 
 def CloseDB(conn):
